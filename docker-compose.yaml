@@ -1,0 +1,68 @@
+version: '3.9'
+services:
+  
+
+  strongswan:
+    image: strongswan-ubuntu:test
+    container_name: strongswan-gateway
+    env_file: [ config/.env ]
+    sysctls:
+    - net.ipv4.ip_forward=1
+    - net.ipv4.conf.all.accept_redirects=0 
+    - net.ipv4.conf.all.send_redirects=0
+    cap_add:
+    - NET_ADMIN    
+    ports:
+    - 500:500/udp
+    - 4500:4500/udp
+    volumes:
+    - './config/strongswan/swanctl.conf.eval:/etc/swanctl/swanctl.conf.eval:ro'
+    - './config/strongswan/strongswan.conf.eval:/etc/strongswan.conf.eval:ro' 
+    # render before start container...
+    - './config/strongswan/swanctl.conf:/etc/swanctl/swanctl.conf'
+    - './config/strongswan/strongswan.conf:/etc/strongswan.conf'
+    # let`s encrypt`
+    - './certs/tls.crt:/etc/swanctl/x509/tls.crt:ro'
+    - './certs/tls.key:/etc/swanctl/private/tls.key:ro'
+    restart: always
+    networks: [ cloud404 ]
+    links: [ radius ]
+    depends_on: [ radius ]
+
+  
+  radius:
+    image: freeradius/freeradius-server:3.2.3
+    container_name: freeradius-server
+    env_file: [ config/.env ]
+    command: radiusd -X 
+    volumes:
+    - './config/freeradius/clients.conf:/etc/raddb/clients.conf:ro'
+    - './config/freeradius/sql:/etc/freeradius/mods-enabled/sql:ro'
+    - './config/freeradius/sql:/etc/freeradius/mods-available/sql:ro'
+    - './config/freeradius/default:/etc/freeradius/sites-available/default:ro'
+    restart: always
+    networks: [ cloud404 ]
+    links: [ mysql ]
+    depends_on: [ mysql ]
+
+
+  mysql:
+    image: mysql:8.0.36-debian
+    container_name: mysql-radius-db
+    ports:
+    - 3306:3306
+    volumes:
+    - './data/mysql:/var/lib/mysql'
+    - './config/mysql/1_schema.sql:/docker-entrypoint-initdb.d/1_schema.sql:ro'
+    - './config/mysql/2_grant.sql:/docker-entrypoint-initdb.d/2_grant.sql:ro'
+    env_file: [ config/.env ]
+    restart: always
+    networks: [ cloud404 ]
+
+
+networks:
+  cloud404:
+    enable_ipv6: false
+    ipam:
+      config:
+      - subnet: 10.0.0.0/16

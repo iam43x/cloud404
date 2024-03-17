@@ -1,0 +1,29 @@
+charon-systemd {
+    start-scripts {
+        creds = swanctl --load-creds
+        conns = swanctl --load-conns
+        pools = swanctl --load-pools
+    }
+    plugins {
+        include strongswan.d/charon/*.conf
+        eap-radius {
+            load = yes
+            class_group = yes
+            eap_start = no
+            servers {
+                the-chosen-one {
+                    address = ${RADIUS_SERVER_ADDRESS}
+                    secret = ${RADIUS_SERVER_SECRET} 
+                    nas_identifier = ${HOST}
+                }
+            }
+        }
+    }
+    filelog {
+        stdout {
+          default = ${CHARON_LOG_LEVEL}
+        }
+    }
+}
+
+include strongswan.d/*.conf
