@@ -3,7 +3,7 @@ services:
   
 
   strongswan:
-    image: strongswan-ubuntu:test
+    build: .
     container_name: strongswan-gateway
     env_file: [ config/.env ]
     sysctls:
@@ -25,8 +25,7 @@ services:
     - './certs/tls.crt:/etc/swanctl/x509/tls.crt:ro'
     - './certs/tls.key:/etc/swanctl/private/tls.key:ro'
     restart: always
-    networks: [ cloud404 ]
-    links: [ radius ]
+    networks: [ blackhole ]
     depends_on: [ radius ]
 
   
@@ -41,15 +40,14 @@ services:
     - './config/freeradius/sql:/etc/freeradius/mods-available/sql:ro'
     - './config/freeradius/default:/etc/freeradius/sites-available/default:ro'
     restart: always
-    networks: [ cloud404 ]
-    links: [ mysql ]
+    networks: [ blackhole ]
     depends_on: [ mysql ]
 
 
   mysql:
     image: mysql:8.0.36-debian
     container_name: mysql-radius-db
-    ports:
+    ports: # fix before release version
     - 3306:3306
     volumes:
     - './data/mysql:/var/lib/mysql'
@@ -57,11 +55,36 @@ services:
     - './config/mysql/2_grant.sql:/docker-entrypoint-initdb.d/2_grant.sql:ro'
     env_file: [ config/.env ]
     restart: always
-    networks: [ cloud404 ]
+    networks: [ blackhole ]
 
 
+  control-center:
+    image: nginx:1.24.0-alpine
+    ports:
+    # - 80:80
+    - 443:443
+    volumes:
+    - ./control-center/src:/app:ro
+    # let`s encrypt certificates
+    - ./certs:/certs:ro
+    - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    env_file: [ config/.env ]
+    restart: always
+    networks: [ blackhole ]
+    depends_on: [ freeradius-admin ]
+
+
+  freeradius-admin:
+    build: ./freeradius-admin
+    container_name: freeradius-admin
+    env_file: [ config/.env ]
+    restart: always
+    networks: [ blackhole ]
+    depends_on: [ mysql ]
+
+    
 networks:
-  cloud404:
+  blackhole:
     enable_ipv6: false
     ipam:
       config:

@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: freeRADIUS Admin - OpenAPI 3.0
+  description: get http api for admin freeradius
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /addUser:
+    post:
+      tags:
+      - user
+      summary: add user to radius
+      description: "add [ user + checks + reply ]"
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+  /getAllUsers:
+    post:
+      tags:
+      - user
+      summary: get all user by tenant
+      description: get all user by tenant
+      operationId: getAllUser
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+                x-content-type: application/json
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      example:
+        password: password
+        name: name

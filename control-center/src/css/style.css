@@ -1,0 +1,62 @@
+#profile-info-form {
+    max-width: 400px;
+    margin: auto;
+    padding: 3%;
+}
+
+.nav-link {
+    color: grey;
+}
+
+.nav-link:hover {
+    color: white;
+}
+
+.nav-link:active {
+    background-color: black;
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-bg: black;
+}
+
+.collapsing {
+    transition: height 0.5s ease-out;
+}
+
+.w-30 {
+    width: 30%;
+}
+
+.w-35 {
+  width: 35%;
+}
+
+.remove-user-btn {
+  width: 100%;
+  max-width: 50px;
+}
+
+#add-user-modal-btn {
+  width: 100px;
+}
+
+th:last-child {
+  width: 50px;
+}
+
+#login-password-span {
+  border-top-left-radius: 0%;
+}
+
+#login-username-span {
+  border-bottom-left-radius: 0%;
+}
+
+#login-username-input {
+  border-bottom-right-radius: 0%;
+}
+
+#login-password-input {
+  border-top-right-radius: 0%;
+}

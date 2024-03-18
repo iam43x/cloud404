@@ -12,7 +12,7 @@
 --
 --  Create default administrator for RADIUS
 --
-CREATE USER 'radius'@'mysql' IDENTIFIED BY 'radpass';
+-- CREATE USER 'radius'@'mysql' IDENTIFIED BY 'radpass';
 
 --
 --  The server can read the authorisation data

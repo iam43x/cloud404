@@ -6,7 +6,7 @@ echo "
 * template render config files *
 ****************************************"
 for FILE in '/etc/strongswan.conf.eval' '/etc/swanctl/swanctl.conf.eval';
-  do eval echo -e `<$FILE` >>> ${FILE:0:-5};
+  do eval echo -e `<$FILE` > ${FILE%.????};
 done;
 
 echo "
