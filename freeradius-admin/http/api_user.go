@@ -16,7 +16,11 @@ import (
 	"freeradius-admin/db"
 )
 
+var domain = os.Getenv("HOST")
+
 func AddUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -30,27 +34,24 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		Operator: ":=", 
 		Value: user.Password,
 	}
-	uc.SaveToDB()
-	domain := os.Getenv("HOST")
-	gc := db.GroupCheck{
-		Groupname: domain,
-		Attribute: "NAS-Identifier",
-		Operator: ":=",
-		Value: domain,
+	userInfo := uc.SaveToDB()
+	uc.SaveGroup(domain)
+	err = json.NewEncoder(w).Encode(userInfo)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Print("AddUser failed deserialize!", err)
+		return
 	}
-	gc.SaveToDB()
-	gr := db.GroupReply{
-		Groupname: domain,
-		Attribute: "Class",
-		Operator: ":=",
-		Value: domain,
-	}
-	gr.SaveToDB()
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
 }
 
 func GetAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+	users := db.GetAllUserByGroup(domain)
+	err := json.NewEncoder(w).Encode(users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Print("AddUser failed deserialize!", err)
+		return
+	} 
 }

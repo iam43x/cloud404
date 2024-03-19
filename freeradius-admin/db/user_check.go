@@ -11,8 +11,8 @@ type UserCheck struct {
 	Value string
 }
 
-func (uc UserCheck) SaveToDB() {
-	_, err := connection.Exec(
+func (uc UserCheck) SaveToDB() *UserInfo {
+	result, err := connection.Exec(
 		"INSERT INTO radcheck(username, attribute, op, value) VALUES (?, ?, ?, ?)", 
 		&uc.Username,
 		&uc.Attribute,
@@ -22,4 +22,6 @@ func (uc UserCheck) SaveToDB() {
 	if err != nil{
         log.Panic("UserCheck save failed!", err)
     }
+	id, _ := result.LastInsertId()
+	return &UserInfo{ ID: id, Username: uc.Username }
 }

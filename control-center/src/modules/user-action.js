@@ -1,25 +1,4 @@
 //user stub
-const userList = [
-    {
-        id: 1,
-        username: 'Mark',
-        server: 'testing',
-        comment: 'stub'
-    },
-    {
-        id: 11,
-        username: 'Jacob',
-        server: 'testing',
-        comment: 'stub'
-    },
-    {
-        id: 100,
-        username: 'Larry',
-        server: 'testing',
-        comment: 'stub'
-    }
-]
-
 export function renderAddUserModal() {
     $('body').append(
         `<div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
@@ -58,20 +37,29 @@ export function renderAddUserModal() {
 }
 
 export function renderAllUser() {
-    insertToTableRow(
-        userList
-            .map(usr => 
-                `<tr>
-                    <th scope="row">${usr.id}</th>
-                    <td>${usr.username}</td>
-                    <td>${usr.server}</td>
-                    <td>${usr.comment}</td>
-                    ${actionColumn(usr.id)}
-                </tr>`
-            ) 
-            .join('\n')
-    )
-    userList.forEach(usr => addRemoveUserEventListener(usr.id))
+    fetch('/api/getAllUsers',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(resp => resp.json())
+    .then(userList => {
+        insertToTableRow(
+            userList
+                .map(usr => 
+                    `<tr>
+                        <th scope="row">${usr.id}</th>
+                        <td>${usr.username}</td>
+                        <td>${usr.server}</td>
+                        <td>${usr.comment}</td>
+                        ${actionColumn(usr.id)}
+                    </tr>`
+                ) 
+                .join('\n')
+        )
+        userList.forEach(usr => addRemoveUserEventListener(usr.id))
+    })
 }
 
 function addUserHandle(event) {
@@ -80,7 +68,6 @@ function addUserHandle(event) {
     let serverInput = $('#server-info')
     let commentInput = $('#comment-info')
     let user = {
-        id: 1 + Math.floor(Math.random() * 1_000), //fixit db autogen
         username: usernameInput.val(),
         password: passwordInput.val(),
         server: serverInput.val(),
@@ -91,17 +78,18 @@ function addUserHandle(event) {
     passwordInput.val('')
     serverInput.val(serverInput.find('option:first').val())
     commentInput.val('')
-    fetch("/addUser", {
+    fetch("/api/addUser", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(user)
     })
+    .then(resp => resp.json())
     .then(resp => {
         insertToTableRow(
             `<tr>
-                <th scope="row">${user.id}</th>
+                <th scope="row">${resp.id}</th>
                 <td>${user.username}</td>
                 <td>${user.server}</td>
                 <td>${user.comment}</td>
