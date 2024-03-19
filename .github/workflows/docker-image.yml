@@ -10,7 +10,6 @@ jobs:
 
   build:
 
-    environment: docker-image
     runs-on: ubuntu-latest
 
     steps:
@@ -20,8 +19,8 @@ jobs:
       env:
         name: docker-image
       with:
-        username: ${{ vars.DOCKERHUB_USERNAME }}
-        password: ${{ vars.DOCKERHUB_TOKEN }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
