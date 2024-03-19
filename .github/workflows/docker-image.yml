@@ -19,8 +19,8 @@ jobs:
       env:
         name: docker-image
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ docker-image.DOCKERHUB_USERNAME }}
+        password: ${{ docker-image.DOCKERHUB_TOKEN }}
     - name: Build and push
       uses: docker/build-push-action@v5
       with:
