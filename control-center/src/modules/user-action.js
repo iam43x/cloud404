@@ -1,3 +1,5 @@
+import * as api from "./api.js"
+
 //user stub
 export function renderAddUserModal() {
     $('body').append(
@@ -37,68 +39,47 @@ export function renderAddUserModal() {
 }
 
 export function renderAllUser() {
-    fetch('/api/getAllUsers',{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(resp => resp.json())
-    .then(userList => {
-        insertToTableRow(
-            userList
-                .map(usr => 
-                    `<tr>
-                        <th scope="row">${usr.id}</th>
-                        <td>${usr.username}</td>
-                        <td>${usr.server}</td>
-                        <td>${usr.comment}</td>
-                        ${actionColumn(usr.id)}
-                    </tr>`
-                ) 
-                .join('\n')
-        )
-        userList.forEach(usr => addRemoveUserEventListener(usr.id))
-    })
+    api.getAllUsers()
+        .then(resp => resp.json())
+        .then(userList => {
+            insertToTableRow(
+                userList
+                    .map(usr => 
+                        `<tr>
+                            <th scope="row">${usr.id}</th>
+                            <td>${usr.username}</td>
+                            ${actionColumn(usr.id)}
+                        </tr>`
+                    ) 
+                    .join('\n')
+            )
+            userList.forEach(usr => addRemoveUserEventListener(usr.id))
+        })
 }
 
 function addUserHandle(event) {
     let usernameInput = $('#username-info')
     let passwordInput = $('#password-info')
-    let serverInput = $('#server-info')
-    let commentInput = $('#comment-info')
     let user = {
         username: usernameInput.val(),
         password: passwordInput.val(),
-        server: serverInput.val(),
-        comment: commentInput.val()
     }
     // clean value input
     usernameInput.val('')
     passwordInput.val('')
-    serverInput.val(serverInput.find('option:first').val())
-    commentInput.val('')
-    fetch("/api/addUser", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user)
-    })
-    .then(resp => resp.json())
-    .then(resp => {
-        insertToTableRow(
-            `<tr>
-                <th scope="row">${resp.id}</th>
-                <td>${user.username}</td>
-                <td>${user.server}</td>
-                <td>${user.comment}</td>
-                ${actionColumn(user.id)}
-            </tr>`
-        )
-        addRemoveUserEventListener(user.id)
-        $('#addUserModal').modal('hide')
-    })
+    api.addUser(user)
+        .then(resp => resp.json())
+        .then(resp => {
+            insertToTableRow(
+                `<tr>
+                    <th scope="row">${resp.id}</th>
+                    <td>${user.username}</td>
+                    ${actionColumn(user.id)}
+                </tr>`
+            )
+            addRemoveUserEventListener(user.id)
+            $('#addUserModal').modal('hide')
+        })
 }
 
 function insertToTableRow(rowContent) {

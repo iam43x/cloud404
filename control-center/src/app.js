@@ -3,12 +3,12 @@ import { renderNavbar, updateNavbar } from "./modules/navbar.js"
 import { renderTabs } from "./modules/tabs.js"
 import { tryGetCurrentUser } from "./modules/auth.js"
 
-$(document).ready(() => {
+$(document).ready(async () => {
     renderModalLoginForm()
     renderNavbar()
-    const currentUser = tryGetCurrentUser()
-    if(currentUser) {
-        renderTabs()
-        updateNavbar(currentUser)
-    }
+    tryGetCurrentUser()
+        .then(currentUser => {
+            renderTabs(currentUser)
+            updateNavbar(currentUser)
+        })
 })

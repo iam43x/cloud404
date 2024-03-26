@@ -2,38 +2,46 @@ package db
 
 import (
 	"log"
+	cfg "freeradius-admin/config"
 )
 
-type UserInfo struct {
-	ID int64 `json:"id"`
-	Username string `json:"username"`
+type UserGroupEntity struct {
+	ID int64
+	Username string
+	Groupname string
 }
 
-func GetAllUserByGroup(group string) []UserInfo {
-	rows, err := connection.Query("SELECT id, username FROM radusergroup WHERE groupname = ?", group)
+func GetAllUser() (users []UserGroupEntity, err error) {
+	rows, err := connection.Query("SELECT uc.id, uc.username FROM radcheck AS uc JOIN radusergroup as g ON g.username = uc.username WHERE g.groupname = ?", cfg.Domain)
 	if err != nil {
-		log.Panic("GetAllUserByGroup select failed!", err)
-	}
-	var users []UserInfo
-	for rows.Next() {
-		var user UserInfo
-		err := rows.Scan(&user.ID, &user.Username);
-		if err != nil {
-			log.Panic("GetAllUser mapping failed!", err)
+		log.Println("GetAllUser select failed!", err)
+		return nil, err
+	} else {
+		for rows.Next() {
+			var uge UserGroupEntity
+			err := rows.Scan(&uge.ID, &uge.Username)
+			if err != nil {
+				log.Println("GetAllUser mapping failed!", err)
+			} else {
+				log.Printf("User{ID=%d, Username=%s}\n", uge.ID, uge.Username)
+				users = append(users, uge)
+			}
 		}
-		log.Printf("User{ID=%d, Username=%s}\n", user.ID, user.Username)
-		users = append(users, user)
+		return users, nil
 	}
-	return users
 }
 
-func (uc UserCheck) SaveGroup(group string) {
+/***
+*	not idempotent
+*/
+func (uge *UserGroupEntity) SaveGroup() error {
 	_, err := connection.Exec(
 		"INSERT INTO radusergroup(username, groupname) VALUES(?, ?)",
-		uc.Username,
-		group,
+		uge.Username,
+		uge.Groupname,
 	)
 	if err != nil {
-		log.Panic("UserGroup save failed!", err)
+		log.Println("UserGroupEntity save failed!", err)
 	}
+	return err
 }

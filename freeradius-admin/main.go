@@ -2,11 +2,23 @@ package main
 
 import (
 	"log"
+	"os"
+	"time"
 	"net/http"
 	api "freeradius-admin/http"
 	"freeradius-admin/db"
-	"time"
+	cfg "freeradius-admin/config"
+	"freeradius-admin/secure"
 )
+
+func init() {
+	//config init
+	cfg.Domain = os.Getenv("HOST")
+	//init db connection
+	db.NewConnection()
+	// start goroutine sheduled task
+	go secure.TokenBucketRefreshScheduledTask()
+}
 
 func main() {
 	server := &http.Server{
@@ -16,7 +28,7 @@ func main() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	log.Printf("Server start on [%s]!", server.Addr)
-	db.NewConnection()
+	log.Printf("Server start on [%s%s]!", cfg.Domain, server.Addr)
+	
 	log.Fatal(server.ListenAndServe())
 }

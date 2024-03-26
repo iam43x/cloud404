@@ -5,8 +5,8 @@ echo "
 ****************************************
 * template render config files *
 ****************************************"
-for FILE in '/etc/strongswan.conf.eval' '/etc/swanctl/swanctl.conf.eval';
-  do eval echo -e `<$FILE` > ${FILE%.????};
+for FILE in '/etc/strongswan.template.conf' '/etc/swanctl/swanctl.template.conf';
+  do cat $FILE | envsubst | tee $(echo $FILE | sed -e 's/\.template//');
 done;
 
 echo "

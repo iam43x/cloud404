@@ -1,7 +1,7 @@
 import { renderProfileTab } from "./profile-action.js"
 import { renderSettingsTab } from "./settings.js"
 
-export function renderTabs() {
+export function renderTabs(currentUser) {
     $('body').append(
         `<div class="container-fluid p-0 table-responsive">
             <div class="collapse" id="collapse-navbar">
@@ -21,6 +21,6 @@ export function renderTabs() {
             </div>
         </div>`
     )
-    renderProfileTab()
+    renderProfileTab(currentUser)
     renderSettingsTab()
 }

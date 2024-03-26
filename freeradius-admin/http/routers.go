@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strings"
 	"github.com/gorilla/mux"
+	"freeradius-admin/secure"
 )
 
 type Route struct {
@@ -19,6 +20,7 @@ type Route struct {
 	Method      string
 	Pattern     string
 	HandlerFunc http.HandlerFunc
+	Secured bool
 }
 
 type Routes []Route
@@ -26,10 +28,12 @@ type Routes []Route
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
-		var handler http.Handler
-		handler = route.HandlerFunc
-		handler = Logger(handler, route.Name)
-
+		var handler http.Handler 
+		handler = Logger(route.HandlerFunc, route.Name)
+		if route.Secured {
+			//add auth handler
+			handler = secure.AuthHandler(handler)
+		}
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
@@ -43,16 +47,34 @@ func NewRouter() *mux.Router {
 var routes = Routes{
 
 	Route{
-		"AddUser",
-		strings.ToUpper("Post"),
-		"/addUser",
-		AddUser,
+		Name: "AddUser",
+		Method: strings.ToUpper("Post"),
+		Pattern: "/addUser",
+		HandlerFunc: AddUser,
+		Secured: true,
 	},
 
 	Route{
-		"GetAllUser",
-		strings.ToUpper("Post"),
-		"/getAllUsers",
-		GetAllUser,
+		Name: "GetAllUser",
+		Method: strings.ToUpper("Post"),
+		Pattern: "/getAllUsers",
+		HandlerFunc: GetAllUser,
+		Secured: true,
+	},
+
+	Route{
+		Name: "GetToken",
+		Method: strings.ToUpper("Post"),
+		Pattern: "/getToken",
+		HandlerFunc: secure.GetToken,
+		Secured: false,
+	},
+
+	Route{
+		Name: "GetContext",
+		Method: strings.ToUpper("Post"),
+		Pattern: "/getContext",
+		HandlerFunc: secure.GetContext,
+		Secured: true,
 	},
 }

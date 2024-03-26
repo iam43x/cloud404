@@ -17,7 +17,7 @@ func (gr GroupReply) SaveToDB() {
 		&gr.Operator,
 		&gr.Value,
 	)
-	if err != nil{
-        log.Panic("GroupReply save failed!", err)
+	if err != nil {
+        log.Println("GroupReply save failed!", err)
     }
 }

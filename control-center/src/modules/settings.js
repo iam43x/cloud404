@@ -7,8 +7,6 @@ export function renderSettingsTab() {
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Username</th>
-                    <th scope="col">Server</th>
-                    <th scope="col">Comment</th>
                     <th scope="col"></th>
                 </tr>
             </thead>

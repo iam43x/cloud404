@@ -1,7 +1,5 @@
-import { tryGetCurrentUser } from "./auth.js"
 
-export function renderProfileTab() {
-    const currentUser = tryGetCurrentUser()
+export function renderProfileTab(currentUser) {
     $('#profile-tab').append(
         `<div id="profile-info-form" class="text-center">
             <div class="input-group mb-3">
@@ -11,10 +9,6 @@ export function renderProfileTab() {
             <div class="input-group mb-3">
                 <span class="input-group-text w-35" id="">Username</span>
                 <input type="username" class="form-control" id="profile-username-input" aria-describedby="emailHelp" placeholder="Enter email" value="${currentUser.name}" readonly>
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text w-35" id="profile-comment-span">Comment</span>
-                <input type="text" class="form-control" id="profile-comment-input" aria-describedby="profile-comment-span" value="${currentUser.comment}">
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text w-35" id="profile-password-span">Password</span>

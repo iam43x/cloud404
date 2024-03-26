@@ -17,7 +17,7 @@ func (gc GroupCheck) SaveToDB() {
 		&gc.Operator,
 		&gc.Value,
 	)
-	if err != nil{
-        log.Panic("GroupCheck save failed!", err)
+	if err != nil {
+        log.Println("GroupCheck save failed!", err)
     }
 }

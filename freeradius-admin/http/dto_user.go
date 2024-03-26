@@ -8,9 +8,12 @@
  */
 package http
 
-type User struct {
-
+type UserRequestDto struct {
 	Username string `json:"username,omitempty"`
-
 	Password string `json:"password,omitempty"`
+}
+
+type UserResponseDto struct {
+	ID int64 `json:"id"`
+	Username string `json:"username,omitempty"`
 }

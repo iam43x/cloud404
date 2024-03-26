@@ -3,6 +3,7 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod u+x /usr/local/bin/entrypoint.sh
 RUN apt update && apt upgrade -y
 RUN apt install -y \
+  gettext \
   iptables \
   strongswan \
   strongswan-swanctl \

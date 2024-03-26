@@ -16,8 +16,8 @@ services:
     - 500:500/udp
     - 4500:4500/udp
     volumes:
-    - './config/strongswan/swanctl.conf.eval:/etc/swanctl/swanctl.conf.eval:ro'
-    - './config/strongswan/strongswan.conf.eval:/etc/strongswan.conf.eval:ro' 
+    - './config/strongswan/swanctl.template.conf:/etc/swanctl/swanctl.template.conf:ro'
+    - './config/strongswan/strongswan.template.conf:/etc/strongswan.template.conf:ro' 
     # render before start container...
     - './config/strongswan/swanctl.conf:/etc/swanctl/swanctl.conf'
     - './config/strongswan/strongswan.conf:/etc/strongswan.conf'
@@ -53,6 +53,7 @@ services:
     - './data/mysql:/var/lib/mysql'
     - './config/mysql/1_schema.sql:/docker-entrypoint-initdb.d/1_schema.sql:ro'
     - './config/mysql/2_grant.sql:/docker-entrypoint-initdb.d/2_grant.sql:ro'
+    - './config/mysql/3_data.sql:/docker-entrypoint-initdb.d/3_data.sql:ro'
     env_file: [ config/.env ]
     restart: always
     networks: [ blackhole ]
@@ -77,6 +78,7 @@ services:
   freeradius-admin:
     build: ./freeradius-admin
     container_name: freeradius-admin
+    # ports: [ 8081:8080 ]
     env_file: [ config/.env ]
     restart: always
     networks: [ blackhole ]
