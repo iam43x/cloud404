@@ -19,9 +19,11 @@ type Authenticate struct {
 	Groupname string `json:"group"`
 	Token string `json:"token"`
 }
-
+/**
+* storing pair token and Authenticate
+* for access with token
+*/
 var tokenCache = map[string]Authenticate{}
-var tokenCacheCleanSheduled bool
 
 func GetToken(w http.ResponseWriter, r *http.Request) {
 	username, password, ok := r.BasicAuth()
@@ -97,9 +99,7 @@ func GetMd5Hash(val string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func TokenBucketRefreshScheduledTask() {
-	//clean bucket per 1 hour
-	tokenCacheCleanSheduled = true
+func TokenCacheRefreshScheduledTask() {
 	for {
 		log.Println("start tokenCache clean...")
 		tokenCache = map[string]Authenticate{}

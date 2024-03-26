@@ -17,7 +17,7 @@ func init() {
 	//init db connection
 	db.NewConnection()
 	// start goroutine sheduled task
-	go secure.TokenBucketRefreshScheduledTask()
+	go secure.TokenCacheRefreshScheduledTask()
 }
 
 func main() {
