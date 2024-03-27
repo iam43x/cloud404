@@ -47,8 +47,7 @@ services:
   mysql:
     image: mysql:8.0.36-debian
     container_name: mysql-radius-db
-    ports: # fix before release version
-    - 3306:3306
+    # ports: [ 3306:3306 ]
     volumes:
     - './data/mysql:/var/lib/mysql'
     - './config/mysql/1_schema.sql:/docker-entrypoint-initdb.d/1_schema.sql:ro'
