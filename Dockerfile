@@ -5,10 +5,7 @@ RUN apt update && apt upgrade -y
 RUN apt install -y \
   gettext \
   iptables \
-  strongswan \
-  strongswan-swanctl \
-  charon-systemd \
-  libcharon-extauth-plugins \
-  libcharon-extra-plugins
+  libcharon-extra-plugins \
+  charon-systemd
 ENTRYPOINT entrypoint.sh
 EXPOSE 500:500/udp 4500:4500/udp
