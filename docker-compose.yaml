@@ -3,7 +3,7 @@ services:
   
 
   strongswan:
-    build: .
+    image: iam43x/strongswan-ubuntu:latest
     container_name: strongswan-gateway
     env_file: [ config/.env ]
     sysctls:
@@ -76,7 +76,7 @@ services:
 
 
   freeradius-admin:
-    build: ./freeradius-admin
+    image: iam43x/freeradius-admin:latest
     container_name: freeradius-admin
     # ports: [ 8081:8080 ]
     env_file: [ config/.env ]
